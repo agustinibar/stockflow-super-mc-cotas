@@ -1,10 +1,11 @@
 "use server";
 
-import { Prisma, StockMovementType } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDemoCompany } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
+import { STOCK_MOVEMENT_TYPE } from "@/lib/stock-movement-type";
 
 export type StockEntryFormState = {
   errors?: {
@@ -110,7 +111,7 @@ export async function createStockEntry(
           companyId: company.id,
           branchId: branch.id,
           productId: product.id,
-          type: StockMovementType.IN,
+          type: STOCK_MOVEMENT_TYPE.IN,
           quantity,
           reason: "Ingreso de mercaderia",
           notes: values.notes || null,

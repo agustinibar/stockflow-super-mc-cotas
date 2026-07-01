@@ -1,10 +1,11 @@
 "use server";
 
-import { Prisma, StockMovementType } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDemoCompany } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
+import { STOCK_MOVEMENT_TYPE } from "@/lib/stock-movement-type";
 
 export type StockExitFormState = {
   errors?: {
@@ -143,7 +144,7 @@ export async function createStockExit(
           companyId: company.id,
           branchId: branch.id,
           productId: product.id,
-          type: StockMovementType.OUT,
+          type: STOCK_MOVEMENT_TYPE.OUT,
           quantity,
           reason: "Salida de mercaderia",
           notes: values.notes || null,

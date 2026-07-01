@@ -1,6 +1,10 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, StockMovementType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import {
+  STOCK_MOVEMENT_TYPE,
+  type StockMovementTypeValue,
+} from "../lib/stock-movement-type";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -197,7 +201,7 @@ const followUpMovements = [
   {
     branch: "Lavalle",
     sku: "ALI-PER-ADU-15",
-    type: StockMovementType.OUT,
+    type: STOCK_MOVEMENT_TYPE.OUT,
     quantity: 3,
     reason: "Salida por venta mostrador",
     notes: "Venta registrada manualmente para demo.",
@@ -205,7 +209,7 @@ const followUpMovements = [
   {
     branch: "Belgrano",
     sku: "ALI-GAT-ADU-75",
-    type: StockMovementType.IN,
+    type: STOCK_MOVEMENT_TYPE.IN,
     quantity: 6,
     reason: "Ingreso de mercaderia",
     notes: "Reposicion semanal.",
@@ -213,7 +217,7 @@ const followUpMovements = [
   {
     branch: "Lavalle",
     sku: "HIG-PIE-PER-4",
-    type: StockMovementType.OUT,
+    type: STOCK_MOVEMENT_TYPE.OUT,
     quantity: 5,
     reason: "Salida por venta mostrador",
     notes: "Movimiento de ejemplo.",
@@ -221,7 +225,7 @@ const followUpMovements = [
   {
     branch: "Belgrano",
     sku: "CUI-PIP-GAT",
-    type: StockMovementType.OUT,
+    type: STOCK_MOVEMENT_TYPE.OUT,
     quantity: 4,
     reason: "Salida por venta mostrador",
     notes: "Venta registrada manualmente para demo.",
@@ -229,7 +233,7 @@ const followUpMovements = [
   {
     branch: "Lavalle",
     sku: "ACC-COR-REF-15",
-    type: StockMovementType.IN,
+    type: STOCK_MOVEMENT_TYPE.IN,
     quantity: 8,
     reason: "Ingreso de mercaderia",
     notes: "Reposicion de accesorios.",
@@ -237,7 +241,7 @@ const followUpMovements = [
   {
     branch: "Belgrano",
     sku: "ALI-AVE-MIX-1",
-    type: StockMovementType.OUT,
+    type: STOCK_MOVEMENT_TYPE.OUT,
     quantity: 7,
     reason: "Salida por venta mostrador",
     notes: "Movimiento de ejemplo.",
@@ -248,7 +252,7 @@ async function registerMovement(input: {
   companyId: string;
   branchId: string;
   productId: string;
-  type: StockMovementType;
+  type: StockMovementTypeValue;
   quantity: number;
   reason: string;
   notes?: string;
@@ -272,7 +276,7 @@ async function registerMovement(input: {
     });
 
     const nextQuantity =
-      input.type === StockMovementType.IN
+      input.type === STOCK_MOVEMENT_TYPE.IN
         ? balance.quantity.plus(input.quantity)
         : balance.quantity.minus(input.quantity);
 
@@ -363,7 +367,7 @@ async function main() {
         companyId: company.id,
         branchId: branch.id,
         productId: product.id,
-        type: StockMovementType.IN,
+        type: STOCK_MOVEMENT_TYPE.IN,
         quantity,
         reason: "Stock inicial",
         notes: `Carga inicial para sucursal ${branch.name}.`,

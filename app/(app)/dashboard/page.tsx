@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { StockMovementType } from "@prisma/client";
 import { getDemoCompany } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
 import { formatDateTime, formatQuantity, movementTypeLabel } from "@/lib/format";
+import { STOCK_MOVEMENT_TYPE } from "@/lib/stock-movement-type";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
     .slice(0, 5);
 
   const outMovements = recentMovements.filter(
-    (movement) => movement.type === StockMovementType.OUT,
+    (movement) => movement.type === STOCK_MOVEMENT_TYPE.OUT,
   ).length;
 
   return (
