@@ -1,12 +1,25 @@
 import Link from "next/link";
-import { getDemoCompany } from "@/lib/demo-company";
+import { AppErrorState } from "../app-error-state";
+import { getDemoCompanyStatus } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
 import { formatQuantity } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function StockPage() {
-  const company = await getDemoCompany();
+  const companyStatus = await getDemoCompanyStatus();
+
+  if (!companyStatus.ok) {
+    return (
+      <AppErrorState
+        detail={companyStatus.detail}
+        message={companyStatus.message}
+        title={companyStatus.title}
+      />
+    );
+  }
+
+  const company = companyStatus.company;
   const branches = await prisma.branch.findMany({
     where: { companyId: company.id, isActive: true },
     include: {

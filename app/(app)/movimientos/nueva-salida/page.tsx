@@ -1,4 +1,5 @@
-import { getDemoCompany } from "@/lib/demo-company";
+import { AppErrorState } from "../../app-error-state";
+import { getDemoCompanyStatus } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
 import { StockMovementForm } from "../stock-movement-form";
 import { createStockExit } from "./actions";
@@ -6,7 +7,19 @@ import { createStockExit } from "./actions";
 export const dynamic = "force-dynamic";
 
 export default async function NewStockExitPage() {
-  const company = await getDemoCompany();
+  const companyStatus = await getDemoCompanyStatus();
+
+  if (!companyStatus.ok) {
+    return (
+      <AppErrorState
+        detail={companyStatus.detail}
+        message={companyStatus.message}
+        title={companyStatus.title}
+      />
+    );
+  }
+
+  const company = companyStatus.company;
   const [products, branches] = await Promise.all([
     prisma.product.findMany({
       where: {

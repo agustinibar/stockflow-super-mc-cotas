@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getDemoCompany } from "@/lib/demo-company";
+import { AppErrorState } from "../../../app-error-state";
+import { getDemoCompanyStatus } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
 import { updateProduct } from "../../actions";
 import { ProductForm } from "../../product-form";
@@ -12,7 +13,19 @@ export default async function EditProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const company = await getDemoCompany();
+  const companyStatus = await getDemoCompanyStatus();
+
+  if (!companyStatus.ok) {
+    return (
+      <AppErrorState
+        detail={companyStatus.detail}
+        message={companyStatus.message}
+        title={companyStatus.title}
+      />
+    );
+  }
+
+  const company = companyStatus.company;
   const product = await prisma.product.findFirst({
     where: {
       id,

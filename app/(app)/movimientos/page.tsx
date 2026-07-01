@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getDemoCompany } from "@/lib/demo-company";
+import { AppErrorState } from "../app-error-state";
+import { getDemoCompanyStatus } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
 import { formatDateTime, formatQuantity, movementTypeLabel } from "@/lib/format";
 
@@ -11,7 +12,19 @@ export default async function MovementsPage({
   searchParams: Promise<{ entry?: string; exit?: string }>;
 }) {
   const params = await searchParams;
-  const company = await getDemoCompany();
+  const companyStatus = await getDemoCompanyStatus();
+
+  if (!companyStatus.ok) {
+    return (
+      <AppErrorState
+        detail={companyStatus.detail}
+        message={companyStatus.message}
+        title={companyStatus.title}
+      />
+    );
+  }
+
+  const company = companyStatus.company;
   const movements = await prisma.stockMovement.findMany({
     where: { companyId: company.id },
     include: { branch: true, product: true },

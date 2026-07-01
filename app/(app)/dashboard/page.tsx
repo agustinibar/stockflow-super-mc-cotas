@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getDemoCompany } from "@/lib/demo-company";
+import { AppErrorState } from "../app-error-state";
+import { getDemoCompanyStatus } from "@/lib/demo-company";
 import { prisma } from "@/lib/db";
 import { formatDateTime, formatQuantity, movementTypeLabel } from "@/lib/format";
 import { STOCK_MOVEMENT_TYPE } from "@/lib/stock-movement-type";
@@ -7,7 +8,19 @@ import { STOCK_MOVEMENT_TYPE } from "@/lib/stock-movement-type";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const company = await getDemoCompany();
+  const companyStatus = await getDemoCompanyStatus();
+
+  if (!companyStatus.ok) {
+    return (
+      <AppErrorState
+        detail={companyStatus.detail}
+        message={companyStatus.message}
+        title={companyStatus.title}
+      />
+    );
+  }
+
+  const company = companyStatus.company;
 
   const [
     branchCount,
